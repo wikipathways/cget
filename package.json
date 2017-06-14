@@ -1,6 +1,6 @@
 {
-  "name": "cget",
-  "version": "0.1.0",
+  "name": "@wikipathways/cget",
+  "version": "0.1.0-1",
   "description": "Robust streaming parallel download manager with filesystem cache",
   "main": "dist/cget.js",
   "typings": "dist/cget.d.ts",
@@ -38,6 +38,6 @@
     "@types/bluebird": "^3.0.36",
     "@types/node": "^6.0.52",
     "@types/request": "0.0.36",
-    "typescript": "^2.1.4"
+    "typescript": "^2.3.4"
   }
 }

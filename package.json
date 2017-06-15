@@ -5,9 +5,23 @@
   "main": "dist/cget.js",
   "typings": "dist/cget.d.ts",
   "scripts": {
-    "tsc": "tsc",
-    "prepublish": "tsc -p src",
-    "test": "node test/serve.js test/cache index.html"
+    "build": "tsc -p tsconfig.json",
+    "test": "npm-run-all test:*",
+    "test:build": "tsc -p test",
+    "test:jest": "jest",
+    "test:orig-ish": "node test/serve.js test/cache index.html"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "testEnvironment": "node",
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "((/src/.*\\.test\\.(ts|tsx|js))|(/test/spec/.*\\.(ts|tsx|js)))$"
   },
   "author": "Juha Järvi",
   "license": "MIT",
@@ -36,8 +50,14 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.36",
+    "@types/jest": "^19.2.4",
+    "@types/lodash": "^4.14.66",
     "@types/node": "^6.0.52",
     "@types/request": "0.0.36",
+    "jest": "^20.0.4",
+    "lodash": "^4.17.4",
+    "npm-run-all": "^4.0.2",
+    "ts-jest": "^20.0.6",
     "typescript": "^2.3.4"
   }
 }

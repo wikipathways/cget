@@ -1,91 +1,141 @@
 // This file is part of cget, copyright (c) 2015-2016 BusFaster Ltd.
 // Released under the MIT license, see LICENSE.
 
-import * as fs from 'fs';
-import * as url from 'url';
-import * as http from 'http';
+// I don't exactly understand the purpose of this test, but running
+// curl http://localhost:12345/example.invalid/index.html
+// now returns HTML. The test was outdated relative to the code, so
+// it didn't work when I first ran it. --AR
+console.log("What is the purpose of this test? See notes in test/serve.ts");
 
-import {fsa, extend} from '../dist/cget/util';
-import {Address, Cache, CacheResult} from '../dist/cget';
+import { assignIn } from "lodash";
+import * as fs from "fs";
+import { fsa } from "../dist/mkdirp";
+import * as url from "url";
+import * as http from "http";
+
+import { Address, Cache, CacheResult } from "../dist/cget";
 
 var cache = new Cache(process.argv[2], process.argv[3]);
 
-type ArgTbl = {[key: string]: string};
+type ArgTbl = { [key: string]: string };
+
+const PORT = 12345;
 
 function parseArgs(query: string) {
-	var result: ArgTbl = {};
+  var result: ArgTbl = {};
 
-	if(query) {
-		for(var item of query.split('&')) {
-			var partList = item.split('=').map(decodeURIComponent);
+  if (query) {
+    for (var item of query.split("&")) {
+      var partList = item.split("=").map(decodeURIComponent);
 
-			if(partList.length == 2) result[partList[0]] = partList[1];
-		}
-	}
+      if (partList.length == 2) result[partList[0]] = partList[1];
+    }
+  }
 
-	return(result);
+  return result;
 }
 
 function reportError(res: http.ServerResponse, code: number, header?: Object) {
-	var body = new Buffer(code + '\n', 'utf-8');
+  var body = new Buffer(code + "\n", "utf-8");
 
-	header = extend(
-		header || {},
-		{
-			'Content-Type': 'text/plain',
-			'Content-Length': body.length
-		}
-	)
+  header = assignIn(header || {}, {
+    "Content-Type": "text/plain",
+    "Content-Length": body.length
+  });
 
-	res.writeHead(code, header);
+  res.writeHead(code, header);
 
-	res.end(body);
+  res.end(body);
 }
 
-var app = http.createServer((req: http.IncomingMessage, res: http.ServerResponse) => {
-	var urlParts = url.parse(req.url);
-	var args = parseArgs(urlParts.query);
-	var host = args['host'];
+// Check if there's a cached link redirecting the URL.
 
-	if(!host) {
-		reportError(res, 400);
-		return;
-	}
+function checkRemoteLink(cachePath: string) {
+  return fsa.open(cachePath, "r").then((fd: number) => {
+    var buf = new Buffer(6);
 
-	urlParts.protocol = 'http';
-	urlParts.search = null;
-	urlParts.query = null;
-	urlParts.host = host;
+    return fsa.read(fd, buf, 0, 6, 0).then(() => {
+      //fsa.close(fd);
 
-	cache.getCachePath(new Address(url.format(urlParts))).then((cachePath: string) =>
-		Cache.checkRemoteLink(cachePath).then((urlRemote: string) => {
-			if(urlRemote) {
-				reportError(res, 302, {
-					'Location': urlRemote
-				});
+      if (buf.equals(new Buffer("LINK: ", "ascii"))) {
+        return fsa
+          .readFile(cachePath, { encoding: "utf-8" })
+          .then((link: string) => {
+            var urlRemote = link.substr(6).replace(/\s+$/, "");
 
-				return;
-			}
+            return urlRemote;
+          });
+      } else return null;
+    });
+  });
+}
 
-			var headerPath = cachePath + '.header.json';
+var app = http.createServer(
+  (req: http.IncomingMessage, res: http.ServerResponse) => {
+    var urlParts = url.parse(req.url);
+    var args = parseArgs(urlParts.query);
+    var host = args["host"];
 
-			fsa.stat(cachePath).then((contentStats: fs.Stats) => {
-				fsa.stat(headerPath).then((headerStats: fs.Stats) =>
-					fsa.readFile(headerPath, { encoding: 'utf8' }).then(JSON.parse)
-				).catch((err: NodeJS.ErrnoException) => ({
-					'Content-Type': 'text/plain;charset=utf-8',
-					'Content-Length': contentStats.size
-				})).then((header: any) => {
-					res.writeHead(200, header);
+    // TODO does localhost not count as a host?
+    // When testing on localhost, args["host"] is null,
+    // but req.headers.host is "localhost:12345".
+    // Since I'm testing on localhost, so I'm adding
+    // this kludge so we don't always just get 400.
+    if (
+      !host &&
+      ["localhost", "127.0.0.1"]
+        .map(h => h + ":" + PORT)
+        .indexOf(req.headers.host) === -1
+    ) {
+      reportError(res, 400);
+      return;
+    }
 
-					fs.createReadStream(cachePath, { encoding: null }).pipe(res);
-				});
-			});
-		}).catch((err: NodeJS.ErrnoException) => {
-			console.log('404: ' + req.url);
-			reportError(res, 404);
-		})
-	);
-});
+    urlParts.protocol = "http";
+    urlParts.search = null;
+    urlParts.query = null;
+    urlParts.host = host;
 
-app.listen(12345);
+    cache
+      .getCachePath(new Address(url.format(urlParts)))
+      .then((cachePath: string) =>
+        checkRemoteLink(cachePath)
+          .then((urlRemote: string) => {
+            if (urlRemote) {
+              reportError(res, 302, {
+                Location: urlRemote
+              });
+
+              return;
+            }
+
+            var headerPath = cachePath + ".header.json";
+
+            fsa.stat(cachePath).then((contentStats: fs.Stats) => {
+              fsa
+                .stat(headerPath)
+                .then((headerStats: fs.Stats) =>
+                  fsa
+                    .readFile(headerPath, { encoding: "utf8" })
+                    .then(JSON.parse)
+                )
+                .catch((err: NodeJS.ErrnoException) => ({
+                  "Content-Type": "text/plain;charset=utf-8",
+                  "Content-Length": contentStats.size
+                }))
+                .then((header: any) => {
+                  res.writeHead(200, header);
+
+                  fs.createReadStream(cachePath, { encoding: null }).pipe(res);
+                });
+            });
+          })
+          .catch((err: NodeJS.ErrnoException) => {
+            console.log("404: " + req.url);
+            reportError(res, 404);
+          })
+      );
+  }
+);
+
+app.listen(PORT);

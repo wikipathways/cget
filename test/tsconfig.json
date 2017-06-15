@@ -1,14 +1,12 @@
 {
-	"compilerOptions": {
-		"declaration": false,
-		"module": "commonjs",
-		"noImplicitAny": true,
-		"target": "es5"
-	},
-	"files": [
-		"../typings/tsd.d.ts",
-		"../dist/cget.d.ts",
-
-		"serve.ts"
-	]
+  "compilerOptions": {
+    "declaration": false,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "target": "es5"
+  },
+  "files": [
+    "../dist/cget.d.ts",
+    "serve.ts"
+  ]
 }

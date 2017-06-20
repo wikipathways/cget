@@ -1,11 +1,21 @@
 // This file is part of cget, copyright (c) 2015-2016 BusFaster Ltd.
 // Released under the MIT license, see LICENSE.
 
-// I don't exactly understand the purpose of this test, but running
-// curl http://localhost:12345/example.invalid/index.html
-// now returns HTML. The test was outdated relative to the code, so
-// it didn't work when I first ran it. --AR
-console.log("What is the purpose of this test? See notes in test/serve.ts");
+console.log(
+  `I don't quite understand the purpose of this test, but
+	it appears to be a server. You can open another terminal
+	window while this server is running and run this request
+
+	curl http://localhost:12345/example.invalid/index.html
+
+	You'll get an HTML response.
+
+	When I started updating this library, the test was
+	broken because it was outdated relative to the code.
+	The server couldn't even return HTML when I first ran it.
+	--AR
+	Quit with Ctrl/Cmd-C`
+);
 
 import { assignIn } from "lodash";
 import * as fs from "fs";

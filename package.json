@@ -8,6 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "test": "npm-run-all test:*",
     "test:jest": "jest",
+    "test:clean": "rm -rf cache/",
     "test:original": "npm-run-all test:original:*",
     "test:original:build": "tsc -p test",
     "test:original:run": "node test/serve.js test/cache index.html"

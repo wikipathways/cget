@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepare": "npm run build",
-    "prepublishOnly": "rm -rf node_modules; npm run install; npm run test:jest",
+    "prepublishOnly": "npm run 'test:jest'",
     "test": "npm-run-all test:*",
     "test:jest": "jest",
     "test:clean": "rm -rf cache/",
@@ -15,6 +15,13 @@
     "test:original:build": "tsc -p test",
     "test:original:run": "node test/serve.js test/cache index.html"
   },
+  "files": [
+    "dist/",
+    "package.json",
+    "package-lock.json",
+    "README.md",
+    "LICENSE"
+  ],
   "jest": {
     "moduleFileExtensions": ["ts", "tsx", "js"],
     "testEnvironment": "node",

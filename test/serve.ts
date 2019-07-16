@@ -45,7 +45,11 @@ function parseArgs(query: string) {
   return result;
 }
 
-function reportError(res: http.ServerResponse, code: number, header?: Object) {
+function reportError(
+  res: http.ServerResponse,
+  code: number,
+  header?: http.OutgoingHttpHeaders
+) {
   var body = new Buffer(code + "\n", "utf-8");
 
   header = assignIn(header || {}, {

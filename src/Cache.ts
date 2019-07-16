@@ -30,6 +30,15 @@ export interface CacheOptions extends FetchOptions {
   concurrency?: number;
 }
 
+export interface FilledCacheOptions extends CacheOptions {
+  allowLocal: boolean;
+  cwd: string;
+  indexName: string;
+  concurrency: number;
+  forceHost?: string;
+  forcePort?: number;
+}
+
 type InternalHeaders = { [key: string]: number | string };
 export type Headers = { [key: string]: string } | http.IncomingHttpHeaders;
 
@@ -69,22 +78,42 @@ export class CacheResult {
 export class CacheError extends Error {
   status: number;
   message: string;
-
   headers: Headers;
 }
 
+const DefaultOptions = {
+  indexName: "index.html",
+  concurrency: 2,
+  allowLocal: false,
+  cwd: "."
+};
+
+/* Note that in the test from serve.ts, the second param for the Cache
+ * constructor is a string: "index.html".
+ * Since the original creator of this library wrote it that way, I updated
+ * this constructor to handle that case. When that parameter is a string,
+ * it is now clearly specifying indexName.
+ */
 export class Cache {
-  constructor(basePath: string, options?: CacheOptions) {
-    if (!options) options = {};
+  constructor(
+    basePath: string = "cache",
+    rawOptions: CacheOptions | string = DefaultOptions
+  ) {
+    let options: FilledCacheOptions;
+    if (typeof rawOptions === "string") {
+      options = { ...DefaultOptions, indexName: rawOptions };
+    } else {
+      options = { ...DefaultOptions, ...rawOptions };
+    }
 
-    this.basePath = path.resolve(basePath || "cache");
-    this.indexName = options.indexName || "index.html";
-    this.fetchQueue = new TaskQueue(Promise, options.concurrency || 2);
+    this.basePath = path.resolve(basePath);
+    this.indexName = options.indexName;
+    this.fetchQueue = new TaskQueue(Promise, options.concurrency);
 
-    this.allowLocal = options.allowLocal || false;
+    this.allowLocal = options.allowLocal;
     this.forceHost = options.forceHost;
     this.forcePort = options.forcePort;
-    this.cwd = options.cwd || ".";
+    this.cwd = options.cwd;
   }
 
   /** Store HTTP redirect headers with the final target address. */

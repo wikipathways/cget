@@ -7,17 +7,16 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepare": "npm run build",
+    "prepublishOnly": "rm -rf node_modules; npm run install; npm run test",
     "test": "npm-run-all test:*",
     "test:jest": "jest",
     "test:clean": "rm -rf cache/",
-    "test:original": "node test/serve.js test/cache index.html"
+    "test:original": "npm-run-all test:original:*",
+    "test:original:build": "tsc -p test",
+    "test:original:run": "node test/serve.js test/cache index.html"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "tsx", "js"],
     "testEnvironment": "node",
     "transform": {
       "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"

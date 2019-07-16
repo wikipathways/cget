@@ -1,4 +1,7 @@
 import { sanitizeUrl, sanitizePath, Address } from "./Address";
+const path = require("path");
+
+const PARENT_DIR = path.resolve("../");
 
 [
   {
@@ -83,18 +86,16 @@ import { sanitizeUrl, sanitizePath, Address } from "./Address";
 });
 
 [
-  /* TODO: make this work generically, not just on AR's mac
   {
     input: "../package.json",
     expected: {
       isLocal: true,
-      path: "/Users/andersriutta/Documents/package.json",
-      uri: "file:///Users/andersriutta/Documents/package.json",
-      url: "file:///Users/andersriutta/Documents/package.json",
+      path: `${PARENT_DIR}/package.json`,
+      uri: `file://${PARENT_DIR}/package.json`,
+      url: `file://${PARENT_DIR}/package.json`,
       urn: null
     }
   },
-  //*/
   {
     input: "file://../package.json",
     expected: {

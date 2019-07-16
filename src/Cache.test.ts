@@ -1,4 +1,7 @@
 import { FetchOptions, Cache, CacheResult } from "./Cache";
+const path = require("path");
+
+const PARENT_DIR = path.resolve("../");
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
 
@@ -60,22 +63,18 @@ test(`Cache instance is object`, () => {
 [`file://${__dirname}/../test/input/dir-example.xsd`].forEach(function(
   urlRemote
 ) {
-  test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, done => {
+  test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, () => {
+    expect.assertions(1);
+
     const cache = new Cache("cache/xsd", {
       indexName: "_index.xsd"
     });
     const options = {};
 
-    expect.assertions(0);
-    cache
-      .fetch(urlRemote, options)
-      .then((cached: CacheResult) => {
-        done();
-      })
-      .catch(done);
-
-    setTimeout(function() {
-      done();
-    }, 4 * 1000);
+    return cache.fetch(urlRemote, options).catch(e => {
+      expect(e.toString()).toMatch(
+        `Error: Access denied to url file://${PARENT_DIR}/cget/test/input/dir-example.xsd`
+      );
+    });
   });
 });

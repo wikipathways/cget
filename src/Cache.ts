@@ -234,7 +234,7 @@ export class Cache {
    * Returns the file's URL after redirections
    * and a readable stream of its contents. */
 
-  fetch(uri: string, options?: FetchOptions) {
+  fetch(uri: string, options?: FetchOptions): Promise<CacheResult> {
     if (!options) options = {};
 
     const address = new Address(uri, this.cwd || options.cwd);
@@ -624,8 +624,7 @@ export class Cache {
   }
 
   /** Queue for limiting parallel downloads. */
-  private fetchQueue: TaskQueue<any>;
-  //private fetchQueue: TaskQueue<Promise<any>>;
+  private fetchQueue: TaskQueue<typeof Promise>;
 
   private basePath: string;
   private indexName: string;

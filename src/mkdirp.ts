@@ -37,14 +37,14 @@ var again = () => againSymbol;
 export function repeat<T>(
   fn: (again: () => {}) => Promise<T> | undefined
 ): Promise<T> {
-  return Promise.try(() => fn(again)!).then(
-    (result: T) => (result == againSymbol ? repeat(fn) : result)
+  return Promise.try(() => fn(again)!).then((result: T) =>
+    result == againSymbol ? repeat(fn) : result
   );
 }
 
 /** Create a new directory and its parent directories.
-  * If a path component to create conflicts with an existing file,
-  * rename to file to <component>/<indexName>. */
+ * If a path component to create conflicts with an existing file,
+ * rename to file to <component>/<indexName>. */
 
 export function mkdirp(pathName: string, indexName: string) {
   var partList = path.resolve(pathName).split(path.sep);

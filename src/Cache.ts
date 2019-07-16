@@ -31,7 +31,7 @@ export interface CacheOptions extends FetchOptions {
 }
 
 type InternalHeaders = { [key: string]: number | string };
-export type Headers = { [key: string]: string };
+export type Headers = { [key: string]: string } | http.IncomingHttpHeaders;
 
 interface RedirectSpec {
   address: Address;
@@ -109,7 +109,7 @@ export class Cache {
   }
 
   /** Try to synchronously guess the cache path for an address.
-	  * May be incorrect if it's a directory. */
+   * May be incorrect if it's a directory. */
 
   getCachePathSync(address: Address) {
     var cachePath = path.join(this.basePath, address.path);
@@ -190,8 +190,8 @@ export class Cache {
   }
 
   /** Store custom data related to a URL-like address,
-	  * for example an XML namespace.
-	  * @return Promise resolving to true after all data is written. */
+   * for example an XML namespace.
+   * @return Promise resolving to true after all data is written. */
 
   store(uri: string, data: string) {
     return this.createCachePath(new Address(uri))
@@ -202,8 +202,8 @@ export class Cache {
   }
 
   /** Fetch URL from cache or download it if not available yet.
-	 * Returns the file's URL after redirections
-	 * and a readable stream of its contents. */
+   * Returns the file's URL after redirections
+   * and a readable stream of its contents. */
 
   fetch(uri: string, options?: FetchOptions) {
     if (!options) options = {};
@@ -306,9 +306,8 @@ export class Cache {
 
     return this.getCachePath(address)
       .then((cachePath: string) =>
-        Cache.getRedirect(cachePath).then(
-          (urlRemote: string) =>
-            urlRemote ? this.getCachePath(new Address(urlRemote)) : cachePath
+        Cache.getRedirect(cachePath).then((urlRemote: string) =>
+          urlRemote ? this.getCachePath(new Address(urlRemote)) : cachePath
         )
       )
       .then(
@@ -358,7 +357,7 @@ export class Cache {
     extra: InternalHeaders
   ) {
     for (let key of Object.keys(headers)) {
-      if (!extra.hasOwnProperty(key)) extra[key] = headers[key];
+      if (!extra.hasOwnProperty(key)) extra[key] = headers[key] as string;
     }
 
     return fsa.writeFile(
@@ -412,7 +411,7 @@ export class Cache {
           headers: res.headers
         });
 
-        urlRemote = url.resolve(urlRemote, res.headers.location);
+        urlRemote = url.resolve(urlRemote, res.headers.location as string);
         address = new Address(urlRemote);
 
         this.fetchCached(address, options, resolveTask)
@@ -442,10 +441,10 @@ export class Cache {
     streamRequest.on("error", (err: NodeJS.ErrnoException) => {
       // Check if retrying makes sense for this error.
       if (
-        ("EAI_AGAIN ECONNREFUSED ECONNRESET EHOSTUNREACH " +
-          "ENOTFOUND EPIPE ESOCKETTIMEDOUT ETIMEDOUT ").indexOf(
-          err.code || ""
-        ) < 0
+        (
+          "EAI_AGAIN ECONNREFUSED ECONNRESET EHOSTUNREACH " +
+          "ENOTFOUND EPIPE ESOCKETTIMEDOUT ETIMEDOUT "
+        ).indexOf(err.code || "") < 0
       ) {
         die(err);
       }
@@ -498,8 +497,14 @@ export class Cache {
             streamOut.close();
           });
 
-          streamRequest.pipe(streamOut, { end: true });
-          streamRequest.pipe(streamBuffer, { end: true });
+          streamRequest.pipe(
+            streamOut,
+            { end: true }
+          );
+          streamRequest.pipe(
+            streamBuffer,
+            { end: true }
+          );
           streamRequest.resume();
 
           return Promise.join(
@@ -590,7 +595,8 @@ export class Cache {
   }
 
   /** Queue for limiting parallel downloads. */
-  private fetchQueue: TaskQueue<Promise<any>>;
+  private fetchQueue: TaskQueue<any>;
+  //private fetchQueue: TaskQueue<Promise<any>>;
 
   private basePath: string;
   private indexName: string;

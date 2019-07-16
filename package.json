@@ -6,12 +6,11 @@
   "typings": "dist/cget.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
     "test": "npm-run-all test:*",
     "test:jest": "jest",
     "test:clean": "rm -rf cache/",
-    "test:original": "npm-run-all test:original:*",
-    "test:original:build": "tsc -p test",
-    "test:original:run": "node test/serve.js test/cache index.html"
+    "test:original": "node test/serve.js test/cache index.html"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -56,6 +55,7 @@
     "@types/lodash": "^4.14.119",
     "@types/node": "^7.10.2",
     "@types/request": "^0.0.36",
+    "depcheck": "^0.8.3",
     "jest": "^20.0.4",
     "lodash": "^4.17.11",
     "npm-run-all": "^4.1.5",

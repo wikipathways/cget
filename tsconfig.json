@@ -10,7 +10,5 @@
     "strictNullChecks": true,
     "target": "es5"
   },
-  "files": [
-    "./src/cget.ts"
-  ]
+  "include": ["./src/*.ts"]
 }

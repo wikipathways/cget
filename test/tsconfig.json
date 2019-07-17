@@ -3,10 +3,8 @@
     "declaration": false,
     "module": "commonjs",
     "noImplicitAny": true,
+    "lib": ["dom", "es2015"],
     "target": "es5"
   },
-  "files": [
-    "../dist/cget.d.ts",
-    "serve.ts"
-  ]
+  "files": ["../dist/cget.d.ts", "serve.ts"]
 }

@@ -12,17 +12,17 @@ import * as Promise from "bluebird";
 export const fsa = {
   stat: Promise.promisify(fs.stat),
   open: Promise.promisify(fs.open),
-  rename: (Promise.promisify(fs.rename) as any) as (
+  rename: (Promise.promisify(fs.rename) as unknown) as (
     src: string,
     dst: string
   ) => Promise<{}>,
   mkdir: Promise.promisify(fs.mkdir) as (name: string) => Promise<{}>,
   read: Promise.promisify(fs.read),
-  readFile: (Promise.promisify(fs.readFile) as any) as (
+  readFile: (Promise.promisify(fs.readFile) as unknown) as (
     name: string,
     options: { encoding: string; flag?: string }
   ) => Promise<string>,
-  writeFile: Promise.promisify(fs.writeFile) as (
+  writeFile: (Promise.promisify(fs.writeFile) as unknown) as (
     name: string,
     content: string,
     options: { encoding: string; flag?: string }
@@ -75,7 +75,7 @@ export function mkdirp(pathName: string, indexName: string) {
           );
         }
 
-        return (null as any) as {};
+        return (null as unknown) as {};
       })
       .catch((err: NodeJS.ErrnoException) => {
         // Re-throw unexpected errors.

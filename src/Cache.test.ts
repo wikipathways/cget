@@ -1,8 +1,6 @@
 import { FetchOptions, Cache, CacheResult } from "./Cache";
 const path = require("path");
 
-const PARENT_DIR = path.resolve("../");
-
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
 
 const sharedCache = new Cache("cache/xsd", {
@@ -64,7 +62,7 @@ test(`Cache instance is object`, () => {
   urlRemote
 ) {
   test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, () => {
-    expect.assertions(1);
+    expect.assertions(2);
 
     const cache = new Cache("cache/xsd", {
       indexName: "_index.xsd"
@@ -72,9 +70,24 @@ test(`Cache instance is object`, () => {
     const options = {};
 
     return cache.fetch(urlRemote, options).catch(e => {
-      expect(e.toString()).toMatch(
+      const errorString = e.toString() as string;
+      const firstExpectedChunk = "Error: Access denied to url file://";
+      const lastExpectedChunk = "/cget/test/input/dir-example.xsd";
+      expect(errorString.substr(0, firstExpectedChunk.length)).toMatch(
+        firstExpectedChunk
+      );
+      expect(errorString.substr(-1 * lastExpectedChunk.length)).toMatch(
+        lastExpectedChunk
+      );
+
+      /*
+      // NOTE: it would be nice to use the following instead of the chunks, but
+      // it doesn't work when the parent directory includes a space.
+      const PARENT_DIR = path.resolve("../");
+      expect(errorString).toMatch(
         `Error: Access denied to url file://${PARENT_DIR}/cget/test/input/dir-example.xsd`
       );
+      //*/
     });
   });
 });

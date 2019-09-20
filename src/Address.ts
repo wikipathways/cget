@@ -34,32 +34,46 @@ export function sanitizePath(path: string) {
 }
 
 export class Address {
-  constructor(uri: string, cwd?: string) {
-    var urn: string | null = null;
-    var url: string | null = null;
+  constructor(addressURI: string, cwd?: string) {
+    var addressURN: string | null = null;
+    var addressURL: string | null = null;
     var cachePath: string;
 
-    if (uri.match(/^\.?\.?\//)) {
+    if (addressURI.match(/^\.?\.?\//)) {
       // The URI looks more like a local path.
-      cachePath = path.resolve(cwd || ".", uri);
-      url = "file://" + cachePath;
+      // TODO: what about if addressURI is just "package.json"?
+      cachePath = path.resolve(cwd || ".", addressURI);
+      addressURL = url.pathToFileURL(cachePath).href;
       this.isLocal = true;
-    } else if (uri.substr(0, 5) == "file:") {
-      cachePath = path.resolve(uri.substr(5));
-      url = "file://" + cachePath;
+    } else if (addressURI.substr(0, 5) == "file:") {
+      const match = addressURI.match(/^file:(?:\/\/)?(\.?\.?\/?.*)/);
+      if (!match) {
+        throw new Error(`Invalid input: "${addressURI}"`);
+      }
+      // path.resolve handles relative file URLs (these may not be valid file URLs):
+      //   file://../package.json
+      //   file://package.json
+      //   file:package.json
+      // decodeURIComponent handles URL-encoded file URLs:
+      //   file:///home/has%20space/package.json
+      cachePath = url.fileURLToPath(
+        "file://" + path.resolve(cwd || ".", decodeURIComponent(match[1]))
+      );
+      addressURL = url.pathToFileURL(cachePath).href;
       this.isLocal = true;
-    } else if (uri.substr(0, 4) == "urn:") {
-      urn = uri;
-      cachePath = urn.substr(4).replace(/:/g, "/");
+    } else if (addressURI.substr(0, 4) == "urn:") {
+      addressURN = addressURI;
+      cachePath = addressURN.substr(4).replace(/:/g, "/");
     } else {
       // If the URI is not a URN address, interpret it as a URL address and clean it up.
-      url = sanitizeUrl(uri);
-      cachePath = uri.substr(uri.indexOf(":") + 1);
+      addressURL = sanitizeUrl(addressURI);
+      const decodedAddressURL = decodeURI(addressURI);
+      cachePath = decodedAddressURL.substr(decodedAddressURL.indexOf(":") + 1);
     }
 
-    this.uri = (urn || url)!;
-    this.urn = urn;
-    this.url = url;
+    this.uri = (addressURN || addressURL)!;
+    this.urn = addressURN;
+    this.url = addressURL;
     this.path = this.isLocal ? cachePath : sanitizePath(cachePath);
   }
 

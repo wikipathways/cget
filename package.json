@@ -1,6 +1,6 @@
 {
   "name": "@wikipathways/cget",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Robust streaming parallel download manager with filesystem cache",
   "main": "dist/cget.js",
   "typings": "dist/cget.d.ts",

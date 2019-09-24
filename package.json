@@ -9,14 +9,14 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepare": "ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...'; (cd \"$ALLE_DIR\"; npm run '@wikipathways/cget:build'); else npm run build; fi",
-    "prepublishOnly": "ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...'; (cd \"$ALLE_DIR\"; npm run '@wikipathways/cget:test'); else npm run test; fi",
+    "prepare": "ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...' && (cd \"$ALLE_DIR\" && npm run '@wikipathways/cget:build'); else npm run build; fi",
+    "prepublishOnly": "ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...' && (cd \"$ALLE_DIR\" && npm run '@wikipathways/cget:test'); else npm run test; fi",
     "test": "npm-run-all test:*",
     "test:jest": "jest",
     "test:clean": "rm -rf cache/",
     "test:original": "npm-run-all test:original:*",
     "test:original:build": "tsc -p test",
-    "test:original:run": "echo 'TODO: is this test useful?'; echo ''; (timeout 3s node test/serve.js test/cache index.html; exit 0)"
+    "test:original:run": "echo 'TODO: is this test useful?' && echo '' && (timeout 3s node test/serve.js test/cache index.html && exit 0)"
   },
   "files": [
     "dist/",

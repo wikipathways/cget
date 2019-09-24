@@ -16,7 +16,7 @@
     "test:clean": "rm -rf cache/",
     "test:original": "npm-run-all test:original:*",
     "test:original:build": "tsc -p test",
-    "test:original:run": "echo 'TODO: is this test useful?' && echo '' && (timeout 3s node test/serve.js test/cache index.html && exit 0)"
+    "test:original:run": "echo 'TODO: is this test useful?' && echo '' && (timeout 3s node test/serve.js test/cache index.html; exit 0)"
   },
   "files": [
     "dist/",

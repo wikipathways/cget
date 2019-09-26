@@ -75,14 +75,14 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.27",
-    "@types/jest": "^24.0.15",
-    "@types/lodash": "^4.14.136",
-    "@types/node": "^10.14.18",
-    "@types/request": "^2.48.2",
-    "jest": "^24.8.0",
+    "@types/jest": "^24.0.18",
+    "@types/lodash": "^4.14.139",
+    "@types/node": "^10.14.19",
+    "@types/request": "^2.48.3",
+    "jest": "^24.9.0",
     "lodash": "^4.17.15",
     "npm-run-all": "^4.1.5",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.5.3"
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3"
   }
 }

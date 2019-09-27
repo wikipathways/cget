@@ -1,6 +1,6 @@
 {
   "name": "@wikipathways/cget",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "Robust streaming parallel download manager with filesystem cache",
   "main": "dist/cget.js",
   "typings": "dist/cget.d.ts",
@@ -71,12 +71,13 @@
   "dependencies": {
     "bluebird": "^3.5.5",
     "cwait": "^1.1.2",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "source-map-support": "^0.5.13"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.27",
     "@types/jest": "^24.0.18",
-    "@types/lodash": "^4.14.139",
+    "@types/lodash": "^4.14.140",
     "@types/node": "^10.14.19",
     "@types/request": "^2.48.3",
     "jest": "^24.9.0",

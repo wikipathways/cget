@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepare": "ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...' && (cd \"$ALLE_DIR\" && npm run '@wikipathways/cget:build'); else npm run build; fi",
-    "prepublishOnly": "ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...' && (cd \"$ALLE_DIR\" && npm run '@wikipathways/cget:test'); else npm run test; fi",
+    "prepublishOnly": "npm i --package-lock-only && ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...' && (cd \"$ALLE_DIR\" && npm run '@wikipathways/cget:test'); else npm run test; fi",
+    "postpublish": "TAG=\"v$(jq -r .version package.json)\" && git commit -am \"Bumped to version $TAG\" && git tag -a $TAG -m \"Published version $TAG\" && git push origin $TAG",
     "test": "npm-run-all test:*",
     "test:jest": "jest",
     "test:clean": "rm -rf cache/",
@@ -77,7 +78,7 @@
   "devDependencies": {
     "@types/bluebird": "^3.5.27",
     "@types/jest": "^24.0.18",
-    "@types/lodash": "^4.14.140",
+    "@types/lodash": "^4.14.141",
     "@types/node": "^10.14.19",
     "@types/request": "^2.48.3",
     "jest": "^24.9.0",

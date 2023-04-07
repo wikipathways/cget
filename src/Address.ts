@@ -45,7 +45,7 @@ export class Address {
       cachePath = path.resolve(cwd || ".", addressURI);
       addressURL = url.pathToFileURL(cachePath).href;
       this.isLocal = true;
-    } else if (addressURI.substr(0, 5) == "file:") {
+    } else if (addressURI.substring(0, 5) == "file:") {
       const match = addressURI.match(/^file:(?:\/\/)?(\.?\.?\/?.*)/);
       if (!match) {
         throw new Error(`Invalid input: "${addressURI}"`);
@@ -61,14 +61,14 @@ export class Address {
       );
       addressURL = url.pathToFileURL(cachePath).href;
       this.isLocal = true;
-    } else if (addressURI.substr(0, 4) == "urn:") {
+    } else if (addressURI.substring(0, 4) == "urn:") {
       addressURN = addressURI;
-      cachePath = addressURN.substr(4).replace(/:/g, "/");
+      cachePath = addressURN.substring(4).replace(/:/g, "/");
     } else {
       // If the URI is not a URN address, interpret it as a URL address and clean it up.
       addressURL = sanitizeUrl(addressURI);
       const decodedAddressURL = decodeURI(addressURI);
-      cachePath = decodedAddressURL.substr(decodedAddressURL.indexOf(":") + 1);
+      cachePath = decodedAddressURL.substring(decodedAddressURL.indexOf(":") + 1);
     }
 
     this.uri = (addressURN || addressURL)!;

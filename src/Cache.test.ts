@@ -73,10 +73,10 @@ test(`Cache instance is object`, () => {
       const errorString = e.toString() as string;
       const firstExpectedChunk = "Error: Access denied to url file://";
       const lastExpectedChunk = "/cget/test/input/dir-example.xsd";
-      expect(errorString.substr(0, firstExpectedChunk.length)).toMatch(
+      expect(errorString.substring(0, firstExpectedChunk.length)).toMatch(
         firstExpectedChunk
       );
-      expect(errorString.substr(-1 * lastExpectedChunk.length)).toMatch(
+      expect(errorString.substring(-1 * lastExpectedChunk.length)).toMatch(
         lastExpectedChunk
       );
 

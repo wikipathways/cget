@@ -1,5 +1,5 @@
 {
-  "name": "@wikipathways/cget",
+  "name": "@loanlink/cget",
   "version": "0.1.7",
   "description": "Robust streaming parallel download manager with filesystem cache",
   "main": "dist/cget.js",
@@ -9,12 +9,12 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepare": "ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...' && (cd \"$ALLE_DIR\" && npm run '@wikipathways/cget:build'); else npm run build; fi",
-    "prepublishOnly": "npm i --package-lock-only && ALLE_DIR='../../../../'; if [ ! -d ./node_modules ] && [ -d \"$ALLE_DIR\"/node_modules ]; then echo 'Alle configuration detected. Testing from the top-level alle directory...' && (cd \"$ALLE_DIR\" && npm run '@wikipathways/cget:test'); else npm run test; fi",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm i --package-lock-only && npm run test",
     "postpublish": "TAG=\"v$(jq -r .version package.json)\" && git commit -am \"Bumped to version $TAG\" && git tag -a $TAG -m \"Published version $TAG\" && git push origin $TAG",
     "test": "npm-run-all test:*",
     "test:jest": "jest",
-    "test:clean": "rm -rf cache/",
+    "test:clean": "rimraf cache/",
     "test:original": "npm-run-all test:original:*",
     "test:original:build": "tsc -p test",
     "test:original:run": "echo 'TODO: is this test useful?' && echo '' && (timeout 3s node test/serve.js test/cache index.html; exit 0)"
@@ -53,12 +53,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ariutta/cget.git"
+    "url": "git+https://github.com/Capital-Management-Group/cget.git"
   },
   "bugs": {
-    "url": "https://github.com/charto/cget/issues"
+    "url": "https://github.com/Capital-Management-Group/cget/issues"
   },
-  "homepage": "https://github.com/charto/cget#readme",
+  "homepage": "https://github.com/Capital-Management-Group/cget#readme",
   "keywords": [
     "cache",
     "caching",
@@ -70,21 +70,19 @@
     "http"
   ],
   "dependencies": {
-    "bluebird": "^3.7.1",
     "cwait": "^1.1.2",
     "request": "^2.88.0",
     "source-map-support": "^0.5.16"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.28",
-    "@types/jest": "^24.0.21",
+    "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.144",
     "@types/node": "^10.17.0",
     "@types/request": "^2.48.3",
-    "jest": "^24.9.0",
+    "jest": "^29.5.0",
     "lodash": "^4.17.15",
-    "npm-run-all": "^4.1.5",
-    "ts-jest": "^24.1.0",
-    "typescript": "^3.6.4"
+    "npm-run-all2": "^6.0.5",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.3"
   }
 }

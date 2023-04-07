@@ -23,7 +23,7 @@ import { fsa } from "../dist/mkdirp";
 import * as url from "url";
 import * as http from "http";
 
-import { Address, Cache, CacheResult } from "../dist/cget";
+import { Address, Cache } from "../dist/cget";
 
 var cache = new Cache(process.argv[2], process.argv[3]);
 
@@ -75,7 +75,7 @@ function checkRemoteLink(cachePath: string) {
         return fsa
           .readFile(cachePath, { encoding: "utf-8" })
           .then((link: string) => {
-            var urlRemote = link.substr(6).replace(/\s+$/, "");
+            var urlRemote = link.substring(6).replace(/\s+$/, "");
 
             return urlRemote;
           });

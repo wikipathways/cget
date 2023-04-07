@@ -8,9 +8,8 @@ import * as url from "url";
 import * as http from "http";
 import * as stream from "stream";
 import * as request from "request";
-import * as Promise from "bluebird";
 
-import { TaskQueue } from "cwait";
+import { PromisyClass, TaskQueue } from "cwait";
 
 import { fsa, mkdirp, isDir } from "./mkdirp";
 import { Address } from "./Address";
@@ -108,7 +107,7 @@ export class Cache {
 
     this.basePath = path.resolve(basePath);
     this.indexName = options.indexName;
-    this.fetchQueue = new TaskQueue(Promise, options.concurrency);
+    this.fetchQueue = new TaskQueue(Promise as PromisyClass, options.concurrency);
 
     this.allowLocal = options.allowLocal;
     this.forceHost = options.forceHost;
@@ -119,21 +118,22 @@ export class Cache {
   /** Store HTTP redirect headers with the final target address. */
 
   private addLinks(redirectList: RedirectSpec[], target: Address) {
-    return Promise.map(
-      redirectList,
-      ({
-        address: address,
-        status: status,
-        message: message,
-        headers: headers
-      }) =>
-        this.createCachePath(address).then((cachePath: string) =>
-          this.storeHeaders(cachePath, headers, {
-            "cget-status": status,
-            "cget-message": message,
-            "cget-target": target.uri
-          })
-        )
+    return Promise.all(
+      redirectList.map(
+        ({
+          address: address,
+          status: status,
+          message: message,
+          headers: headers
+        }) =>
+          this.createCachePath(address).then((cachePath: string) =>
+            this.storeHeaders(cachePath, headers, {
+              "cget-status": status,
+              "cget-message": message,
+              "cget-target": target.uri
+            })
+          )
+      ),
     );
   }
 
@@ -292,42 +292,40 @@ export class Cache {
     );
   }
 
-  private fetchLocal(
+  private async fetchLocal(
     address: Address,
     options: FetchOptions,
-    resolveTask: () => void,
+    resolveTask: (value: unknown) => void,
     rejectTask: (err?: NodeJS.ErrnoException) => void
   ) {
     var streamIn = fs.createReadStream(address.path);
 
-    return new Promise((resolve, reject) => {
+    const headers: InternalHeaders = await new Promise((resolve, reject) => {
       // Resolve promise with headers if stream opens successfully.
       streamIn.on("open", () => resolve(Cache.defaultHeaders));
 
       // Cached file doesn't exist or IO error.
-      streamIn.on("error", (err: NodeJS.ErrnoException) => {
-        reject(err);
-        rejectTask(err);
-        throw err;
+      streamIn.on("error", (err_1: NodeJS.ErrnoException) => {
+        reject(err_1);
+        rejectTask(err_1);
+        throw err_1;
       });
 
       streamIn.on("end", resolveTask);
-    }).then(
-      (headers: InternalHeaders) =>
-        new CacheResult(
-          streamIn,
-          address,
-          headers["cget-status"] as number,
-          headers["cget-message"] as string,
-          Cache.removeInternalHeaders(headers)
-        )
+    });
+    return new CacheResult(
+      streamIn,
+      address,
+      headers["cget-status"] as number,
+      headers["cget-message"] as string,
+      Cache.removeInternalHeaders(headers)
     );
   }
 
   private fetchCached(
     address: Address,
     options: FetchOptions,
-    resolveTask: () => void
+    resolveTask: (value: unknown) => void
   ) {
     var streamIn: fs.ReadStream;
 
@@ -399,7 +397,7 @@ export class Cache {
   private fetchRemote(
     address: Address,
     options: FetchOptions,
-    resolveTask: () => void,
+    resolveTask: (value: unknown) => void,
     rejectTask: (err?: NodeJS.ErrnoException) => void
   ) {
     var urlRemote = address.url!;
@@ -536,13 +534,13 @@ export class Cache {
           );
           streamRequest.resume();
 
-          return Promise.join(
+          return Promise.all([
             this.addLinks(redirectList, address),
             this.storeHeaders(cachePath, res.headers, {
               "cget-status": res.statusCode!,
               "cget-message": res.statusMessage!
             })
-          ).finally(() =>
+          ]).finally(() =>
             resolve(
               new CacheResult(
                 (streamBuffer as any) as stream.Readable,
@@ -624,7 +622,7 @@ export class Cache {
   }
 
   /** Queue for limiting parallel downloads. */
-  private fetchQueue: TaskQueue<typeof Promise>;
+  private fetchQueue: TaskQueue<PromisyClass>;
 
   private basePath: string;
   private indexName: string;

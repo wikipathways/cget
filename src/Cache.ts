@@ -11,7 +11,8 @@ import * as request from "request";
 
 import { PromisyClass, TaskQueue } from "cwait";
 
-import { fsa, mkdirp, isDir } from "./mkdirp";
+import { fsa, isDir } from "./mkdirp";
+import { mkdirp } from "mkdirp";
 import { Address } from "./Address";
 
 // TODO: continue interrupted downloads.
@@ -188,7 +189,7 @@ export class Cache {
 
   private createCachePath(address: Address) {
     return this.getCachePath(address).then((cachePath: string) =>
-      mkdirp(path.dirname(cachePath), this.indexName).then(() => cachePath)
+      mkdirp(path.dirname(cachePath)).then(() => cachePath)
     );
   }
 

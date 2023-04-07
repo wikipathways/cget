@@ -98,7 +98,7 @@ var app = http.createServer(
     if (
       !host &&
       ["localhost", "127.0.0.1"]
-        .map(h => h + ":" + PORT)
+        .map((h) => h + ":" + PORT)
         .indexOf(req.headers.host) === -1
     ) {
       reportError(res, 400);

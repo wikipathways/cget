@@ -68,7 +68,9 @@ export class Address {
       // If the URI is not a URN address, interpret it as a URL address and clean it up.
       addressURL = sanitizeUrl(addressURI);
       const decodedAddressURL = decodeURI(addressURI);
-      cachePath = decodedAddressURL.substring(decodedAddressURL.indexOf(":") + 1);
+      cachePath = decodedAddressURL.substring(
+        decodedAddressURL.indexOf(":") + 1
+      );
     }
 
     this.uri = (addressURN || addressURL)!;

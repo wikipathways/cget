@@ -14,8 +14,8 @@ test(`Cache instance is object`, () => {
 [
   "https://cdn.rawgit.com/ariutta/GPML/e869fe1dcd824348bc4e00ef283547ff8b7b371c/GPML2013a.xsd",
   `file://${__dirname}/../test/input/dir-example.xsd`
-].forEach(function(urlRemote) {
-  test(`cache.fetch: ${urlRemote} w/ allowLocal enabled`, done => {
+].forEach(function (urlRemote) {
+  test(`cache.fetch: ${urlRemote} w/ allowLocal enabled`, (done) => {
     const options = {
       allowLocal: true
     };
@@ -36,8 +36,8 @@ test(`Cache instance is object`, () => {
 
 [
   "https://cdn.rawgit.com/ariutta/GPML/e869fe1dcd824348bc4e00ef283547ff8b7b371c/GPML2013a.xsd"
-].forEach(function(urlRemote) {
-  test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, done => {
+].forEach(function (urlRemote) {
+  test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, (done) => {
     const cache = new Cache("cache/xsd", {
       indexName: "_index.xsd"
     });
@@ -58,7 +58,7 @@ test(`Cache instance is object`, () => {
   });
 });
 
-[`file://${__dirname}/../test/input/dir-example.xsd`].forEach(function(
+[`file://${__dirname}/../test/input/dir-example.xsd`].forEach(function (
   urlRemote
 ) {
   test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, () => {
@@ -69,7 +69,7 @@ test(`Cache instance is object`, () => {
     });
     const options = {};
 
-    return cache.fetch(urlRemote, options).catch(e => {
+    return cache.fetch(urlRemote, options).catch((e) => {
       const errorString = e.toString() as string;
       const firstExpectedChunk = "Error: Access denied to url file://";
       const lastExpectedChunk = "/cget/test/input/dir-example.xsd";

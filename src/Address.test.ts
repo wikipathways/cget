@@ -33,7 +33,7 @@ const path = require("path");
     input: "http://pathvisio.org/GPML/2013a",
     expected: "http://pathvisio.org/GPML/2013a"
   }
-].forEach(function({ input, expected }) {
+].forEach(function ({ input, expected }) {
   test(`sanitizeUrl: ${input}`, () => {
     expect(sanitizeUrl(input)).toBe(expected);
   });
@@ -83,7 +83,7 @@ const path = require("path");
     input: "http://pathvisio.org/GPML/2013a",
     expected: "http/pathvisio.org/GPML/2013a"
   }
-].forEach(function({ input, expected }) {
+].forEach(function ({ input, expected }) {
   test(`sanitizePath: ${input}`, () => {
     expect(sanitizePath(input)).toBe(expected);
   });
@@ -264,7 +264,7 @@ const testCasesForNoCwd = [
     }
   }
 ];
-testCasesForNoCwd.forEach(function({ input, expected }) {
+testCasesForNoCwd.forEach(function ({ input, expected }) {
   test(`Address for ${input}`, () => {
     expect(new Address(input)).toEqual(expected);
   });
@@ -346,7 +346,7 @@ testCasesForNoCwd
       }
     }
   ])
-  .forEach(function({ input, expected }) {
+  .forEach(function ({ input, expected }) {
     const cwd = "/Users/me/Documents";
     test(`Address for ${input} & ${cwd}`, () => {
       expect(new Address(input, cwd)).toEqual(expected);

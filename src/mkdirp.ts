@@ -10,17 +10,17 @@ import * as util from "util";
 export const fsa = {
   stat: util.promisify(fs.stat),
   open: util.promisify(fs.open),
-  rename: (util.promisify(fs.rename) as unknown) as (
+  rename: util.promisify(fs.rename) as unknown as (
     src: string,
     dst: string
   ) => Promise<{}>,
   mkdir: util.promisify(fs.mkdir) as (name: string) => Promise<void>,
   read: util.promisify(fs.read),
-  readFile: (util.promisify(fs.readFile) as unknown) as (
+  readFile: util.promisify(fs.readFile) as unknown as (
     name: string,
     options: { encoding: string; flag?: string }
   ) => Promise<string>,
-  writeFile: (util.promisify(fs.writeFile) as unknown) as (
+  writeFile: util.promisify(fs.writeFile) as unknown as (
     name: string,
     content: string,
     options: { encoding: string; flag?: string }
@@ -35,9 +35,9 @@ var again = () => againSymbol;
 export function repeat<T>(
   fn: (again: () => {}) => Promise<T> | undefined
 ): Promise<T> {
-  return util.promisify(() => fn(again)!)().then((result: T) =>
-    result == againSymbol ? repeat(fn) : result
-  );
+  return util
+    .promisify(() => fn(again)!)()
+    .then((result: T) => (result == againSymbol ? repeat(fn) : result));
 }
 
 /** Create a new directory and its parent directories.
@@ -56,7 +56,8 @@ export function mkdirp(pathName: string, indexName: string) {
 
     pathPrefix = prefixList.join(path.sep);
 
-    return util.promisify(() => fsa.stat(pathPrefix))()
+    return util
+      .promisify(() => fsa.stat(pathPrefix))()
       .then((stats: fs.Stats) => {
         if (stats.isFile()) {
           // Trying to convert a file into a directory.
@@ -64,7 +65,8 @@ export function mkdirp(pathName: string, indexName: string) {
 
           var tempPath = pathPrefix + "." + makeTempSuffix(6);
 
-          return util.promisify(() => fsa.rename(pathPrefix, tempPath))()
+          return util
+            .promisify(() => fsa.rename(pathPrefix, tempPath))()
             .then(() => fsa.mkdir(pathPrefix))
             .then(() => fsa.rename(tempPath, path.join(pathPrefix, indexName)));
         } else if (!stats.isDirectory()) {
@@ -73,7 +75,7 @@ export function mkdirp(pathName: string, indexName: string) {
           );
         }
 
-        return (null as unknown) as {};
+        return null as unknown as {};
       })
       .catch((err: NodeJS.ErrnoException) => {
         // Re-throw unexpected errors.
@@ -88,7 +90,8 @@ export function mkdirp(pathName: string, indexName: string) {
       async (pathPrefix: any, part: string) => {
         var pathNew = pathPrefix + path.sep + part;
 
-        return await util.promisify(() => fsa.mkdir(pathNew))()
+        return await util
+          .promisify(() => fsa.mkdir(pathNew))()
           .catch((err: NodeJS.ErrnoException) => {
             // Because of a race condition with simultaneous cache stores,
             // the directory might already exist.

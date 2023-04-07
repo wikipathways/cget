@@ -8,7 +8,7 @@ test("cache exists", () => {
 
 test("cache.fetch => 200", () => {
   expect.assertions(2);
-  return cache.fetch("http://google.com/index.html").then(function(res) {
+  return cache.fetch("http://google.com/index.html").then(function (res) {
     expect(typeof res).toBe("object");
     expect(res.status).toBe(200);
   });

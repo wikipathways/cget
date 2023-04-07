@@ -107,7 +107,10 @@ export class Cache {
 
     this.basePath = path.resolve(basePath);
     this.indexName = options.indexName;
-    this.fetchQueue = new TaskQueue(Promise as PromisyClass, options.concurrency);
+    this.fetchQueue = new TaskQueue(
+      Promise as PromisyClass,
+      options.concurrency
+    );
 
     this.allowLocal = options.allowLocal;
     this.forceHost = options.forceHost;
@@ -133,7 +136,7 @@ export class Cache {
               "cget-target": target.uri
             })
           )
-      ),
+      )
     );
   }
 
@@ -524,14 +527,8 @@ export class Cache {
             streamOut.close();
           });
 
-          streamRequest.pipe(
-            streamOut,
-            { end: true }
-          );
-          streamRequest.pipe(
-            streamBuffer,
-            { end: true }
-          );
+          streamRequest.pipe(streamOut, { end: true });
+          streamRequest.pipe(streamBuffer, { end: true });
           streamRequest.resume();
 
           return Promise.all([
@@ -543,7 +540,7 @@ export class Cache {
           ]).finally(() =>
             resolve(
               new CacheResult(
-                (streamBuffer as any) as stream.Readable,
+                streamBuffer as any as stream.Readable,
                 address,
                 res.statusCode!,
                 res.statusMessage!,
@@ -639,7 +636,7 @@ export class Cache {
 
     var func = proto.redirectTo;
 
-    proto.redirectTo = function(this: any) {
+    proto.redirectTo = function (this: any) {
       var urlRemote = func.apply(this, Array.prototype.slice.apply(arguments));
       var options: FetchOptions = this.request.cgetOptions;
 

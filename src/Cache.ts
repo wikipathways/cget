@@ -427,7 +427,7 @@ export class Cache {
 
     var streamBuffer = new stream.PassThrough();
 
-    var streamRequest = request.get({
+    const streamRequest = request.get({
       url: Cache.forceRedirect(urlRemote, options),
       encoding: null,
       followRedirect: (res: http.IncomingMessage) => {

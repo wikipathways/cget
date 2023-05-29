@@ -21,7 +21,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "rimraf ./dist && tsc --build",
     "prepare": "npm run build",
     "prepublishOnly": "npm i --package-lock-only && npm run test",
     "postpublish": "TAG=\"v$(jq -r .version package.json)\" && git commit -am \"Bumped to version $TAG\" && git tag -a $TAG -m \"Published version $TAG\" && git push origin $TAG",

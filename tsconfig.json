@@ -1,21 +1,17 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "inlineSourceMap": true,
-    "inlineSources": true,
+    "outDir": "./dist",
+
     "module": "node16",
     "moduleResolution": "node16",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "outDir": "./dist",
-    "removeComments": false,
+    "target": "es2021", // Node 16
     "lib": ["esnext"],
-    "strictNullChecks": true,
-    "target": "esnext",
+
+    "declaration": true,
+    "declarationMap": true,
+
     "strict": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["**/*.test.ts"]
 }

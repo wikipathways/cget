@@ -2,11 +2,23 @@
   "name": "@loanlink/cget",
   "version": "1.0.0",
   "description": "Robust streaming parallel download manager with filesystem cache",
-  "main": "dist/cget.js",
+  "author": "Loanlink",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Capital-Management-Group/cget.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Capital-Management-Group/cget/issues"
+  },
+  "homepage": "https://github.com/Capital-Management-Group/cget#readme",
   "type": "module",
-  "typings": "dist/cget.d.ts",
+  "exports": {
+    "types": "./dist/cget.d.ts",
+    "default": "./dist/cget.js"
+  },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=16"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -20,38 +32,8 @@
     "test:original:build": "tsc -p test"
   },
   "files": [
-    "dist/",
-    "package.json",
-    "package-lock.json",
-    "README.md",
-    "LICENSE"
+    "dist/"
   ],
-  "jest": {
-    "preset": "ts-jest/presets/default-esm",
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    },
-    "transform": {
-      "^.+\\.tsx?$": [
-        "ts-jest",
-        {
-          "useESM": true
-        }
-      ]
-    },
-    "testRegex": "(/src/.*\\.test\\.(ts|tsx|js))$",
-    "testRunner": "jasmine2"
-  },
-  "author": "Juha Järvi",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Capital-Management-Group/cget.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Capital-Management-Group/cget/issues"
-  },
-  "homepage": "https://github.com/Capital-Management-Group/cget#readme",
   "keywords": [
     "cache",
     "caching",
@@ -80,5 +62,21 @@
     "rimraf": "^5.0.1",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4"
+  },
+  "jest": {
+    "preset": "ts-jest/presets/default-esm",
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    },
+    "testRegex": "(/src/.*\\.test\\.(ts|tsx|js))$",
+    "testRunner": "jasmine2"
   }
 }

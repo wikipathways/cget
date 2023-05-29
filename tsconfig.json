@@ -3,22 +3,19 @@
     "declaration": true,
     "declarationMap": true,
     "experimentalDecorators": true,
+    "esModuleInterop": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "outDir": "./dist",
     "removeComments": false,
-    "lib": [
-      "dom",
-      "es2015"
-    ],
+    "lib": ["esnext"],
     "strictNullChecks": true,
-    "target": "es5"
+    "target": "esnext",
+    "strict": true
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

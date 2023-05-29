@@ -1,5 +1,6 @@
-import { FetchOptions, Cache, CacheResult } from "./Cache";
-const path = require("path");
+import { dirname } from "path";
+import { Cache } from "./Cache.js";
+import { fileURLToPath } from "url";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
 
@@ -8,14 +9,17 @@ const sharedCache = new Cache("cache/xsd", {
 });
 
 describe.only("Cache", () => {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
   test(`Cache instance is object`, () => {
     expect(typeof sharedCache).toBe("object");
   });
 
-  [
-    "https://data.un.org/WS/sdmxv21/schemas/XMLSchema.xsd",
-    `file://${__dirname}/../test/input/dir-example.xsd`
-  ].forEach(function (urlRemote) {
+  const remoteFileUrl =
+    "https://clinicaltrials.gov/ct2/html/images/info/public.xsd";
+  const localFileUrl = `file://${__dirname}/../test/input/dir-example.xsd`;
+
+  [remoteFileUrl, localFileUrl].forEach(function (urlRemote) {
     test(`cache.fetch: ${urlRemote} w/ allowLocal enabled`, async () => {
       const options = {
         allowLocal: true
@@ -30,9 +34,7 @@ describe.only("Cache", () => {
     });
   });
 
-  ["https://data.un.org/WS/sdmxv21/schemas/XMLSchema.xsd"].forEach(function (
-    urlRemote
-  ) {
+  [remoteFileUrl].forEach(function (urlRemote) {
     test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, async () => {
       const cache = new Cache("cache/xsd", {
         indexName: "_index.xsd"
@@ -49,9 +51,7 @@ describe.only("Cache", () => {
     });
   });
 
-  [`file://${__dirname}/../test/input/dir-example.xsd`].forEach(function (
-    urlRemote
-  ) {
+  [localFileUrl].forEach(function (urlRemote) {
     test(`cache.fetch: ${urlRemote} w/ allowLocal disabled`, async () => {
       expect.assertions(2);
 
@@ -63,7 +63,7 @@ describe.only("Cache", () => {
       try {
         return await cache.fetch(urlRemote, options);
       } catch (e) {
-        const errorString = e.toString() as string;
+        const errorString = e?.toString() as string;
         const firstExpectedChunk = "Error: Access denied to url file://";
         const lastExpectedChunk = "/cget/test/input/dir-example.xsd";
         expect(errorString.substring(0, firstExpectedChunk.length)).toMatch(

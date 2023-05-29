@@ -1,5 +1,5 @@
-import { sanitizeUrl, sanitizePath, Address } from "./Address";
-const path = require("path");
+import { sanitizeUrl, sanitizePath, Address } from "./Address.js";
+import "path";
 
 /*******************
  * Test sanitizeUrl

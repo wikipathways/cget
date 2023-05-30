@@ -12,10 +12,8 @@
     "url": "https://github.com/Capital-Management-Group/cget/issues"
   },
   "homepage": "https://github.com/Capital-Management-Group/cget#readme",
-  "exports": {
-    "types": "./dist/cget.d.ts",
-    "default": "./dist/cget.js"
-  },
+  "main": "./dist/cget.js",
+  "typings": "./dist/cget.d.ts",
   "engines": {
     "node": ">=16"
   },

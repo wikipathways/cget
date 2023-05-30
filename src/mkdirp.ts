@@ -36,7 +36,7 @@ export function repeat<T>(
   fn: (again: () => {}) => Promise<T> | undefined
 ): Promise<T> {
   return util
-    .promisify<T>(() => fn(again)!)()
+    .promisify(() => fn(again)!)()
     .then((result: T) => (result == againSymbol ? repeat(fn) : result));
 }
 
@@ -57,7 +57,7 @@ export function mkdirp(pathName: string, indexName: string) {
     pathPrefix = prefixList.join(path.sep);
 
     return util
-      .promisify<fs.Stats>(() => fsa.stat(pathPrefix))()
+      .promisify(() => fsa.stat(pathPrefix))()
       .then((stats: fs.Stats) => {
         if (stats.isFile()) {
           // Trying to convert a file into a directory.
@@ -117,5 +117,5 @@ export function isDir(cachePath: string) {
   return fsa
     .stat(cachePath)
     .then((stats: fs.Stats) => stats.isDirectory())
-    .catch((_: NodeJS.ErrnoException) => false);
+    .catch((err: NodeJS.ErrnoException) => false);
 }

@@ -11,9 +11,9 @@ import got from "got";
 
 import { PromisyClass, TaskQueue } from "cwait";
 
-import { fsa, isDir } from "./mkdirp.js";
+import { fsa, isDir } from "./mkdirp";
 import { mkdirp } from "mkdirp";
-import { Address } from "./Address.js";
+import { Address } from "./Address";
 
 // TODO: continue interrupted downloads.
 // TODO: handle redirect loops.
@@ -76,8 +76,9 @@ export class CacheResult {
 }
 
 export class CacheError extends Error {
-  status?: number;
-  headers?: Headers;
+  status: number;
+  message: string;
+  headers: Headers;
 }
 
 const DefaultOptions = {
@@ -327,7 +328,7 @@ export class Cache {
 
   private fetchCached(
     address: Address,
-    _: FetchOptions,
+    options: FetchOptions,
     resolveTask: (value: unknown) => void
   ) {
     var streamIn: fs.ReadStream;
@@ -336,13 +337,13 @@ export class Cache {
 
     return this.getCachePath(address)
       .then((cachePath: string) =>
-        Cache.getRedirect(cachePath).then((urlRemote: string | null) =>
+        Cache.getRedirect(cachePath).then((urlRemote: string) =>
           urlRemote ? this.getCachePath(new Address(urlRemote)) : cachePath
         )
       )
       .then(
         (cachePath: string) =>
-          new Promise<InternalHeaders>((resolve, reject) => {
+          new Promise((resolve, reject) => {
             streamIn = fs.createReadStream(cachePath);
 
             // Resolve promise with headers if stream opens successfully.
@@ -358,7 +359,7 @@ export class Cache {
                   )
                   .catch(
                     /** If headers are not found, invent some. */
-                    (_: NodeJS.ErrnoException) => Cache.defaultHeaders
+                    (err: NodeJS.ErrnoException) => Cache.defaultHeaders
                   )
               )
             );
@@ -438,7 +439,6 @@ export class Cache {
     });
 
     streamRequest.on("error", (err: NodeJS.ErrnoException) => {
-      console.log(err.code);
       // Check if retrying makes sense for this error.
       if (
         (
@@ -488,7 +488,7 @@ export class Cache {
       streamRequest.pause();
 
       this.createCachePath(address)
-        .then(async (cachePath: string) => {
+        .then((cachePath: string) => {
           var streamOut = fs.createWriteStream(cachePath);
 
           streamOut.on("finish", () => {
@@ -501,16 +501,14 @@ export class Cache {
           streamRequest.pipe(streamBuffer, { end: true });
           streamRequest.resume();
 
-          try {
-            return await Promise.all([
-              this.addLinks(redirectList, address),
-              this.storeHeaders(cachePath, res.headers, {
-                "cget-status": res.statusCode!,
-                "cget-message": res.statusMessage!
-              })
-            ]);
-          } finally {
-            return resolve(
+          return Promise.all([
+            this.addLinks(redirectList, address),
+            this.storeHeaders(cachePath, res.headers, {
+              "cget-status": res.statusCode!,
+              "cget-message": res.statusMessage!
+            })
+          ]).finally(() =>
+            resolve(
               new CacheResult(
                 streamBuffer as any as stream.Readable,
                 address,
@@ -518,8 +516,8 @@ export class Cache {
                 res.statusMessage!,
                 res.headers
               )
-            );
-          }
+            )
+          );
         })
         .catch(die);
     });

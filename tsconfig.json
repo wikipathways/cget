@@ -2,14 +2,16 @@
   "compilerOptions": {
     "outDir": "./dist",
 
-    "module": "node16",
-    "moduleResolution": "node16",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es2021", // Node 16
 
     "declaration": true,
     "declarationMap": true,
 
-    "strict": true
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules", "**/*.test.ts"]

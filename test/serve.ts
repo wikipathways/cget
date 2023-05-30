@@ -19,11 +19,11 @@ console.log(
 
 import { assignIn } from "lodash";
 import * as fs from "fs";
-import { fsa } from "../dist/mkdirp.js";
+import { fsa } from "../dist/mkdirp";
 import * as url from "url";
 import * as http from "http";
 
-import { Address, Cache } from "../dist/cget.js";
+import { Address, Cache } from "../dist/cget";
 
 var cache = new Cache(process.argv[2], process.argv[3]);
 

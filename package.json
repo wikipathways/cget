@@ -1,6 +1,6 @@
 {
   "name": "@loanlink/cget",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Robust streaming parallel download manager with filesystem cache",
   "author": "Loanlink",
   "license": "MIT",

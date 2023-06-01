@@ -12,8 +12,8 @@
     "url": "https://github.com/Capital-Management-Group/cget/issues"
   },
   "homepage": "https://github.com/Capital-Management-Group/cget#readme",
-  "main": "./dist/cget.js",
-  "typings": "./dist/cget.d.ts",
+  "main": "dist/cget.js",
+  "types": "dist/cget.d.ts",
   "engines": {
     "node": ">=16"
   },
@@ -29,9 +29,6 @@
     "test:original:build": "tsc -p test",
     "test:original:run": "echo 'TODO: is this test useful?' && echo '' && (timeout 3s node test/serve.js test/cache index.html; exit 0)"
   },
-  "files": [
-    "dist/"
-  ],
   "keywords": [
     "cache",
     "caching",
@@ -45,8 +42,7 @@
   "dependencies": {
     "cwait": "^1.1.2",
     "got": "^11.8.6",
-    "mkdirp": "^3.0.1",
-    "source-map-support": "^0.5.21"
+    "mkdirp": "^3.0.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.1",
